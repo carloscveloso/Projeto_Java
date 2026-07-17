@@ -28,6 +28,8 @@ public class SwingApp extends JFrame {
         getContentPane().setBackground(new Color(245, 247, 250));
 
         cards.add(criarPainelLogin(), "login");
+        cards.add(criarPainelRegisterCliente(), "registerClient");
+        cards.add(criarPainelRegisterDono(), "registerOwner");
         cards.add(criarPainelDashboard(), "dashboard");
         setContentPane(cards);
         mostrarLogin();
@@ -99,33 +101,8 @@ public class SwingApp extends JFrame {
             mostrarDashboard();
         });
 
-        clientButton.addActionListener(e -> {
-            String nome = JOptionPane.showInputDialog(this, "Nome:");
-            if (nome == null || nome.isBlank()) return;
-            String email = JOptionPane.showInputDialog(this, "Email:");
-            String password = JOptionPane.showInputDialog(this, "Password:");
-            String cc = JOptionPane.showInputDialog(this, "Cartao de cidadao:");
-            String fiscal = JOptionPane.showInputDialog(this, "Numero fiscal:");
-            String telefone = JOptionPane.showInputDialog(this, "Telefone:");
-            String morada = JOptionPane.showInputDialog(this, "Morada:");
-            String localidade = JOptionPane.showInputDialog(this, "Localidade:");
-            service.registarCliente(nome, email, password, cc, fiscal, telefone, morada, localidade);
-            JOptionPane.showMessageDialog(this, "Cliente registado.");
-        });
-
-        ownerButton.addActionListener(e -> {
-            String nome = JOptionPane.showInputDialog(this, "Nome:");
-            if (nome == null || nome.isBlank()) return;
-            String email = JOptionPane.showInputDialog(this, "Email:");
-            String password = JOptionPane.showInputDialog(this, "Password:");
-            String cc = JOptionPane.showInputDialog(this, "Cartao de cidadao:");
-            String fiscal = JOptionPane.showInputDialog(this, "Numero fiscal:");
-            String telefone = JOptionPane.showInputDialog(this, "Telefone:");
-            String morada = JOptionPane.showInputDialog(this, "Morada:");
-            String localidade = JOptionPane.showInputDialog(this, "Localidade:");
-            service.registarDonoEmpresa(nome, email, password, cc, fiscal, telefone, morada, localidade);
-            JOptionPane.showMessageDialog(this, "Dono registado.");
-        });
+        clientButton.addActionListener(e -> mostrarRegistroCliente());
+        ownerButton.addActionListener(e -> mostrarRegistroDono());
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -135,6 +112,144 @@ public class SwingApp extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         panel.add(card, gbc);
         return panel;
+    }
+
+    private JPanel criarPainelRegisterCliente() {
+        JPanel panel = criarPainelRegistroBase("Registo de Cliente");
+
+        JTextField nomeField = new JTextField();
+        JTextField emailField = new JTextField();
+        JPasswordField passwordField = new JPasswordField();
+        JTextField ccField = new JTextField();
+        JTextField fiscalField = new JTextField();
+        JTextField telefoneField = new JTextField();
+        JTextField moradaField = new JTextField();
+        JTextField localidadeField = new JTextField();
+        JLabel statusLabel = new JLabel(" ");
+        statusLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        statusLabel.setForeground(new Color(180, 30, 30));
+
+        panel.add(createFieldPanel("Nome", nomeField));
+        panel.add(createFieldPanel("Email", emailField));
+        panel.add(createFieldPanel("Password", passwordField));
+        panel.add(createFieldPanel("Cartao de cidadao", ccField));
+        panel.add(createFieldPanel("Numero fiscal", fiscalField));
+        panel.add(createFieldPanel("Telefone", telefoneField));
+        panel.add(createFieldPanel("Morada", moradaField));
+        panel.add(createFieldPanel("Localidade", localidadeField));
+
+        JButton submit = new JButton("Criar cliente");
+        JButton back = new JButton("Voltar");
+        submit.setBackground(new Color(0, 120, 230));
+        submit.setForeground(Color.WHITE);
+        submit.setFocusPainted(false);
+        submit.setMaximumSize(new Dimension(260, 32));
+        back.setMaximumSize(new Dimension(260, 32));
+
+        submit.addActionListener(e -> {
+            if (nomeField.getText().isBlank() || emailField.getText().isBlank() || passwordField.getPassword().length == 0) {
+                statusLabel.setText("Preencha pelo menos nome, email e password.");
+                return;
+            }
+            service.registarCliente(nomeField.getText().trim(), emailField.getText().trim(), new String(passwordField.getPassword()), ccField.getText().trim(), fiscalField.getText().trim(), telefoneField.getText().trim(), moradaField.getText().trim(), localidadeField.getText().trim());
+            statusLabel.setForeground(new Color(30, 120, 30));
+            statusLabel.setText("Cliente registado com sucesso.");
+        });
+
+        back.addActionListener(e -> mostrarLogin());
+
+        panel.add(statusLabel);
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(submit);
+        panel.add(Box.createVerticalStrut(6));
+        panel.add(back);
+        return panel;
+    }
+
+    private JPanel criarPainelRegisterDono() {
+        JPanel panel = criarPainelRegistroBase("Registo de Dono");
+
+        JTextField nomeField = new JTextField();
+        JTextField emailField = new JTextField();
+        JPasswordField passwordField = new JPasswordField();
+        JTextField ccField = new JTextField();
+        JTextField fiscalField = new JTextField();
+        JTextField telefoneField = new JTextField();
+        JTextField moradaField = new JTextField();
+        JTextField localidadeField = new JTextField();
+        JLabel statusLabel = new JLabel(" ");
+        statusLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        statusLabel.setForeground(new Color(180, 30, 30));
+
+        panel.add(createFieldPanel("Nome", nomeField));
+        panel.add(createFieldPanel("Email", emailField));
+        panel.add(createFieldPanel("Password", passwordField));
+        panel.add(createFieldPanel("Cartao de cidadao", ccField));
+        panel.add(createFieldPanel("Numero fiscal", fiscalField));
+        panel.add(createFieldPanel("Telefone", telefoneField));
+        panel.add(createFieldPanel("Morada", moradaField));
+        panel.add(createFieldPanel("Localidade", localidadeField));
+
+        JButton submit = new JButton("Criar dono");
+        JButton back = new JButton("Voltar");
+        submit.setBackground(new Color(0, 120, 230));
+        submit.setForeground(Color.WHITE);
+        submit.setFocusPainted(false);
+        submit.setMaximumSize(new Dimension(260, 32));
+        back.setMaximumSize(new Dimension(260, 32));
+
+        submit.addActionListener(e -> {
+            if (nomeField.getText().isBlank() || emailField.getText().isBlank() || passwordField.getPassword().length == 0) {
+                statusLabel.setText("Preencha pelo menos nome, email e password.");
+                return;
+            }
+            service.registarDonoEmpresa(nomeField.getText().trim(), emailField.getText().trim(), new String(passwordField.getPassword()), ccField.getText().trim(), fiscalField.getText().trim(), telefoneField.getText().trim(), moradaField.getText().trim(), localidadeField.getText().trim());
+            statusLabel.setForeground(new Color(30, 120, 30));
+            statusLabel.setText("Dono registado com sucesso.");
+        });
+
+        back.addActionListener(e -> mostrarLogin());
+
+        panel.add(statusLabel);
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(submit);
+        panel.add(Box.createVerticalStrut(6));
+        panel.add(back);
+        return panel;
+    }
+
+    private JPanel criarPainelRegistroBase(String titulo) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(245, 247, 250));
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 24, 20, 24));
+
+        JLabel title = new JLabel(titulo);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        title.setAlignmentX(Component.LEFT_ALIGNMENT);
+        title.setBorder(BorderFactory.createEmptyBorder(0, 0, 12, 0));
+
+        panel.add(title);
+        return panel;
+    }
+
+    private JPanel createFieldPanel(String label, JComponent field) {
+        JPanel fieldPanel = new JPanel();
+        fieldPanel.setLayout(new BoxLayout(fieldPanel, BoxLayout.Y_AXIS));
+        fieldPanel.setBackground(new Color(245, 247, 250));
+        fieldPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel fieldLabel = new JLabel(label);
+        fieldLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        fieldLabel.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
+
+        field.setMaximumSize(new Dimension(260, 28));
+        field.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        fieldPanel.add(fieldLabel);
+        fieldPanel.add(field);
+        fieldPanel.add(Box.createVerticalStrut(8));
+        return fieldPanel;
     }
 
     private JPanel criarPainelDashboard() {
@@ -208,6 +323,16 @@ public class SwingApp extends JFrame {
     private void mostrarLogin() {
         cardLayout.show(cards, "login");
         setTitle("DentalCare - Login");
+    }
+
+    private void mostrarRegistroCliente() {
+        cardLayout.show(cards, "registerClient");
+        setTitle("DentalCare - Registo de Cliente");
+    }
+
+    private void mostrarRegistroDono() {
+        cardLayout.show(cards, "registerOwner");
+        setTitle("DentalCare - Registo de Dono");
     }
 
     private void mostrarDashboard() {
